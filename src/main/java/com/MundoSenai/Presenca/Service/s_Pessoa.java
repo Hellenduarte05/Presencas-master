@@ -18,27 +18,29 @@ public class s_Pessoa {
         return r_Pessoa.findByUsuarioESenha(Long.valueOf(usuario),senha);
     }
 
-    public static String cadastrarPessoa(String nome, String email, String cpf, String telefone, String datanasc, String senha, String conf_senha){
-        if(!senha.equals(conf_senha)) {
-            return "A Senha e a Confirmação de Senha devem serm iguais";
-        }else if(!CpfValidator.validateCPF(cpf)){
-            return "CPF Inválido";
-        }else if(nome == null || nome.trim() == ""){
-            return "Deve ser informado o Nome";
-        }else if ((email == null || email.trim() == "")
+    public static String cadastrarPessoa(String nome, String email, String cpf, String telefone, String datanasc, String senha, String confsenha){
+          String mensagemReturn = "";
+        if(!senha.equals(confsenha)) {
+            mensagemReturn += "A Senha e a Confirmação de Senha devem serm iguais";
+        }if(!CpfValidator.validateCPF(cpf)){
+            mensagemReturn += "CPF Inválido";
+        }if(nome == null || nome.trim() == ""){
+            mensagemReturn += "Deve ser informado o Nome";
+        }if ((email == null || email.trim() == "")
                 && (NumberCleaner.cleanNumber(telefone) == null
                 || NumberCleaner.cleanNumber(telefone).trim() == "")){
-            return "e-Mail ou Telefone precisa ser informado";
+            mensagemReturn += "e-Mail ou Telefone precisa ser informado";
     }else{
         m_Pessoa M_Pessoa = new m_Pessoa();
         M_Pessoa.setNome(nome);
-        M_Pessoa.setCpf(Long.valueOf(cpf));
-        M_Pessoa.setTelefone(Long.valueOf(telefone));
+        M_Pessoa.setCpf(Long.valueOf(NumberCleaner.cleanNumber(cpf)));
+        M_Pessoa.setTelefone(Long.valueOf(NumberCleaner.cleanNumber(telefone)));
         M_Pessoa.setEmail(email);
         M_Pessoa.setData_nasc(LocalDate.parse(datanasc));
         M_Pessoa.setSenha(senha);
         r_Pessoa.save(M_Pessoa);
+        mensagemReturn +=  "Cadastro efetuado com sucesso";
     }
-     return "Cadastro efetuado com sucesso";
+     return mensagemReturn;
     }
 }
